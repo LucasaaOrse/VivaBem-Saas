@@ -1,17 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma"
-import type { NextApiRequest } from 'next/types';
 
 interface ByDateItem {
   date: string | Date;
   count: number;
 }
 
-export async function GET(req: NextApiRequest) {
-  const userId = req.query.userId;
+interface Context {
+  params: {
+    userId: string
+  }
+}
+
+export async function GET(req: NextRequest, context: Context) {
+  const userId = context.params.userId
 
   // Pega mês da URL (ex: ?month=2025-06)
-  const { searchParams } = new URL(req.url ?? '');
+  const { searchParams } = new URL(req.url)
   const monthParam = searchParams.get("month") // "2025-06"
 
   let startDate: Date | undefined
@@ -25,18 +30,16 @@ export async function GET(req: NextApiRequest) {
 
   const dateFilter = startDate && endDate ? { gte: startDate, lte: endDate } : undefined
 
-  const userIdString = Array.isArray(req.query.userId) ? req.query.userId[0] : req.query.userId;
-  
   // Lista de serviços (para nomes e preços)
   const services = await prisma.service.findMany({
-    where: { userId: userIdString },
+    where: { userId },
     select: { id: true, name: true, price: true },
   })
 
   // Total de agendamentos
   const totalAppointments = await prisma.appointment.count({
     where: {
-      userId: userIdString,
+      userId,
       appointmentDate: dateFilter,
     },
   })
@@ -45,7 +48,7 @@ export async function GET(req: NextApiRequest) {
   const byService = await prisma.appointment.groupBy({
     by: ["serviceId"],
     where: {
-      userId: userIdString,
+      userId,
       appointmentDate: dateFilter,
     },
     _count: { _all: true },
@@ -54,7 +57,7 @@ export async function GET(req: NextApiRequest) {
   // Agendamentos por dia
   const byDateRaw = await prisma.appointment.findMany({
     where: {
-      userId: userIdString,
+      userId,
       appointmentDate: dateFilter,
     },
     select: {
