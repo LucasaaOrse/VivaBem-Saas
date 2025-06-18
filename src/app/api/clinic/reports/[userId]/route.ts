@@ -12,7 +12,10 @@ interface Context {
   }
 }
 
-export async function GET(req: NextRequest, context: Context) {
+export async function GET(
+  req: NextRequest,
+  context: { params: { userId: string } }
+) {
   const userId = context.params.userId
 
   // Pega mês da URL (ex: ?month=2025-06)
