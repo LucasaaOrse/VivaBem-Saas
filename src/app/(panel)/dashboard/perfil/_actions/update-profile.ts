@@ -11,7 +11,7 @@ const formSchema = z.object({
   phone: z.string().optional(),
   status: z.boolean(),
   timeZone: z.string().min(1, {message: "O horario é obrigario"}),
-  times: z.string()
+  times: z.array(z.string())
 
 })
 
@@ -60,7 +60,7 @@ if (upcoming) {
       phone: formdata.phone,
       status: formdata.status,
       timeZone: formdata.timeZone,
-      times: formdata.times || "[]"
+      times: formdata.times || []
     }
   })
 

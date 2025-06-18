@@ -138,7 +138,7 @@ const timeZone = Intl.supportedValuesOf('timeZone').filter(
       phone: values.phone,
       status: values.status === "active" ? true : false,
       timeZone: values.timeZone,
-      times: JSON.stringify(selectedhour)
+      times: selectedhour
     })
 
     if(response.error){
