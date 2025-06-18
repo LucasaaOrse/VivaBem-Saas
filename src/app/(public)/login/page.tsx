@@ -1,6 +1,5 @@
 "use client"
-
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { signIn } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
@@ -17,9 +16,15 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const router = useRouter()
+  const [success, setSuccess] = useState<string | null>(null)
 
-  const searchParams = useSearchParams()
-  const success = searchParams.get("success")
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const successParam = params.get("success")
+    if (successParam) {
+      setSuccess(successParam)
+    }
+  }, [])
 
   async function handleCredentialsLogin(e: React.FormEvent) {
     e.preventDefault()
