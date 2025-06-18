@@ -14,9 +14,9 @@ interface Context {
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { userId: string } }
-) {
-  const userId = params.userId;
+  { params }: { params: Promise<{ userId: string }> }
+): Promise<NextResponse> {
+  const { userId } = await params;
 
   // Pega mês da URL (ex: ?month=2025-06)
   const { searchParams } = new URL(req.url)
