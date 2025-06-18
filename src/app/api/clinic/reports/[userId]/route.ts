@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server"
+import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma"
 
 interface ByDateItem {
@@ -6,9 +6,8 @@ interface ByDateItem {
   count: number;
 }
 
-export async function GET(req: NextRequest, context: { params: { userId: string } }) {
-  const params = context.params
-  const userId = params.userId
+export async function GET(req: NextRequest, context: { params: Record<string, string> }) {
+  const userId = context.params.userId;
 
   // Pega mês da URL (ex: ?month=2025-06)
   const { searchParams } = new URL(req.url)
