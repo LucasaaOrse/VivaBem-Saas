@@ -7,7 +7,7 @@ interface ByDateItem {
 }
 
 export async function GET(req: NextRequest, context: { params: { userId: string } }) {
-  const params = await context.params
+  const params = context.params
   const userId = params.userId
 
   // Pega mês da URL (ex: ?month=2025-06)

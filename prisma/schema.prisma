@@ -11,7 +11,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://neondb_owner:npg_uhmUHzT1Z7Qb@ep-withered-unit-a8vksrd3-pooler.eastus2.azure.neon.tech/neondb?sslmode=require"
+  url      = env("DATABASE_URL")
 }
 
 model Appointment {
