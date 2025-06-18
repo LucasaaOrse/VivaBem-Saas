@@ -1,19 +1,26 @@
 // app/register/verify/page.tsx
 "use client"
 
-import { useSearchParams, useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
+import {  useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { CheckCircle } from "lucide-react"
 
 export default function EmailVerificationNotice() {
-  const searchParams = useSearchParams()
   const router = useRouter()
-  const email = searchParams.get("email")
+  const [email, setEmail] = useState<string | null>(null)
 
-  if (!email) {
-  router.replace("/")
-  return null
-}
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const emailParam = params.get("email")
+    if (!emailParam) {
+      router.replace("/")
+    } else {
+      setEmail(emailParam)
+    }
+  }, [router])
+
+  if (!email) return null
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 bg-gray-100">
