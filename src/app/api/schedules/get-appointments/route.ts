@@ -40,7 +40,7 @@ export async function GET(req: NextRequest) {
       })
     }
 
-    const timesArray = user.times || [];
+    const timesArray = user.times ? JSON.parse(user.times) as string[] : [];
 
     const appointments = await prisma.appointment.findMany({
       where: {
@@ -48,7 +48,8 @@ export async function GET(req: NextRequest) {
         appointmentDate: {
           gte: startDate,
           lte: endDate
-        }
+        },
+        status: "CONFIRMED"
       },
       include: {
         service: true
@@ -72,8 +73,6 @@ export async function GET(req: NextRequest) {
     }
 
     const blockedtimes = Array.from(blockedSlots)
-
-    console.log("blockedtimes", blockedtimes)
 
     return NextResponse.json({
       blockedtimes

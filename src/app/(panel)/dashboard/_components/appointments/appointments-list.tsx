@@ -17,6 +17,7 @@ import { ButtonPickerAppointment } from "./button-date"
 import { CancelAppointmentModal } from "./CancelAppointmentModal"
 
 
+
 export type AppointmentWithService = Prisma.AppointmentGetPayload<{
   include: {
     service: true

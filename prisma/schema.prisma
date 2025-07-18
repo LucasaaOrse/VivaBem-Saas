@@ -14,6 +14,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum AppointmentStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
+
 model Appointment {
   id String @id @default(uuid())
   name String
@@ -21,12 +28,13 @@ model Appointment {
   phone String
   appointmentDate DateTime
   time String
+  status AppointmentStatus
 
   serviceId String
-  service Service @relation(fields: [serviceId], references: [id])
+  service Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
 
   userId String
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -37,7 +45,7 @@ model Reminder {
   description String
 
   userId String
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -51,7 +59,7 @@ model Service {
   status Boolean @default(true)
 
   userId String
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   appointment Appointment[]
 
@@ -71,7 +79,7 @@ model Subscription {
   priceId String
 
   userId String @unique
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -91,7 +99,7 @@ model User {
   status Boolean @default(true)
   timeZone String?
   stripe_customer_id String?
-  times String[] 
+  times String? @default("[]")
 
   subscription Subscription?
   services Service[]

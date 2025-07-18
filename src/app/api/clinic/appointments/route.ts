@@ -34,7 +34,8 @@ export const GET = auth(async function (req) {
         appointmentDate: {
           gte: startDate,
           lte: endDate
-        }
+        },
+        status: "CONFIRMED"
       },
       include: {
         service: true

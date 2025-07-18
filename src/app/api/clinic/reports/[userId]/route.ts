@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server"
 import prisma from "@/lib/prisma"
 
 interface ByDateItem {
@@ -6,17 +6,9 @@ interface ByDateItem {
   count: number;
 }
 
-interface Context {
-  params: {
-    userId: string
-  }
-}
-
-export async function GET(
-  req: NextRequest,
-  { params }: { params: Promise<{ userId: string }> }
-): Promise<NextResponse> {
-  const { userId } = await params;
+export async function GET(req: NextRequest, context: { params: { userId: string } }) {
+  const params = await context.params
+  const userId = params.userId
 
   // Pega mês da URL (ex: ?month=2025-06)
   const { searchParams } = new URL(req.url)
@@ -44,6 +36,7 @@ export async function GET(
     where: {
       userId,
       appointmentDate: dateFilter,
+      status: "CONFIRMED",
     },
   })
 
@@ -53,6 +46,7 @@ export async function GET(
     where: {
       userId,
       appointmentDate: dateFilter,
+      status: "CONFIRMED",
     },
     _count: { _all: true },
   })
@@ -62,13 +56,13 @@ export async function GET(
     where: {
       userId,
       appointmentDate: dateFilter,
+      status: "CONFIRMED",
     },
     select: {
       appointmentDate: true,
     },
   })
 
-console.log(byDateRaw);
 
 // Agrupa por data no formato YYYY-MM-DD
 const dateMap: Record<string, number> = {}

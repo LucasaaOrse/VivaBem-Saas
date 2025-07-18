@@ -9,19 +9,29 @@ import { Reminders } from "./_components/reminder/reminders"
 import { Appointments } from "./_components/appointments/appointments"
 import { canPermission } from "@/utils/permissions/canPermission"
 import { TrialBanner } from "./_components/TrialBanner"
+import { SubscriptionExpiredCard } from "./_components/subscription-expired-card"
+import { PendingAppointmentsList } from "./_components/pendingAppointmentList/PendingAppointmentsList"
 
 
 
 export default async function Dashboard(){
   const session = await getSession()
   
-  console.log(session)
 
   if(!session){
     redirect('/')
   }
 
   const permissions = await canPermission({type: "service"})
+
+  if (permissions.planId === "TRIAL" && permissions.expired) {
+    return (
+      <main className="p-4">
+        <SubscriptionExpiredCard />
+      </main>
+    )
+  }
+  
 
   return (
     <main>
@@ -47,7 +57,7 @@ export default async function Dashboard(){
 
       <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Appointments userId={session.user?.id!}/>
-        <Reminders userId={session.user?.id!}/>
+        <PendingAppointmentsList />
       </section>
 
 

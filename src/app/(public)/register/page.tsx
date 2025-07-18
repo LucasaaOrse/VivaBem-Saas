@@ -54,9 +54,6 @@ const { watch, setValue, handleSubmit, formState: { errors, isSubmitting } } = f
 
     const json = await res.json()
 
-    console.log("Status da resposta:", res.status)
-    console.log("Resposta JSON:", json)
-
     if (!res.ok) {
       setError(json.error || "Erro ao criar conta.")
     } else {

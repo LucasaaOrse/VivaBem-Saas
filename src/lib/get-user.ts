@@ -26,5 +26,7 @@ export async function getUserFromDb(email: string, password: string): Promise<an
     name: user.name,
     email: user.email,
     image: user.image,
+    emailVerified: user.emailVerified,
+    createdAt: user.createdAt,
   }
 }

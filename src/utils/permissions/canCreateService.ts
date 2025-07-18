@@ -18,13 +18,14 @@ export async function canCreateService(subscription: Subscription | null, sessio
       const plan = subscription.plan
       const planLimits = await getPlan(plan)
 
-      console.log("Limites do seu plano: ", planLimits )
+
 
       return {
         hasPermission: planLimits.maxServices === null || serviceCount <=  planLimits.maxServices,
         planId: subscription.plan,
         expired: false,
-        plan: PLANS[subscription.plan]
+        plan: PLANS[subscription.plan],
+        createdAt: session?.user.createdAt
       }
 
     }
@@ -42,7 +43,8 @@ export async function canCreateService(subscription: Subscription | null, sessio
         hasPermission: false,
         planId: "EXPIRED",
         expired: false,
-        plan: null
+        plan: null,
+        createdAt: session?.user.createdAt
       }
   }
 

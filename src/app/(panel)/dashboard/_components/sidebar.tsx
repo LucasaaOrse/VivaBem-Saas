@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { usePathname } from "next/navigation"
 import clsx from "clsx"
 import {
@@ -22,7 +22,7 @@ import { useRouter } from "next/navigation"
 
 
 import { Button } from "@/components/ui/button"
-import { BanknoteIcon, CalendarCheck, ChevronLeft, ChevronRight, Folder, List, Settings, LogOut, FileText } from "lucide-react"
+import { BanknoteIcon, CalendarCheck, ChevronLeft, ChevronRight, Folder, List, Settings, LogOut, FileText, Loader2 } from "lucide-react"
 import { SidbarLinks } from "./sidebarlinks"
 import { ResultPermissionProp } from "@/utils/permissions/canPermission"
 import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
@@ -35,10 +35,10 @@ interface SidebarProps {
 export function SidebarDashboard({children, permissions}: SidebarProps ){
 
   const router = useRouter()
-  const pathname = usePathname()
   const [isCollapsed, setIsCollapsed] = useState(false)
   const { update } = useSession()
   const [showModal, setShowModal] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   function openUpgradeModal() {
   setShowModal(true)
@@ -49,6 +49,14 @@ export function SidebarDashboard({children, permissions}: SidebarProps ){
     await update()
     router.replace("/")
   }
+
+  const pathname = usePathname()
+
+useEffect(() => {
+  if (loading) {
+    setLoading(false) // página nova carregada, então paramos o loading
+  }
+}, [pathname])
 
   return (
   <div className="flex min-h-screen w-full">
@@ -93,6 +101,7 @@ export function SidebarDashboard({children, permissions}: SidebarProps ){
               pathname={pathname}
               isCollapsed={isCollapsed}
               label="Agendamento"
+              onClick={() => setLoading(true)}
             />
 
             <SidbarLinks
@@ -101,6 +110,7 @@ export function SidebarDashboard({children, permissions}: SidebarProps ){
               pathname={pathname}
               isCollapsed={isCollapsed}
               label="Serviços"
+              onClick={() => setLoading(true)}
             />
 
             {permissions.planId !== "TRIAL" ? (
@@ -110,6 +120,7 @@ export function SidebarDashboard({children, permissions}: SidebarProps ){
                 pathname={pathname}
                 isCollapsed={isCollapsed}
                 label="Relatórios"
+                onClick={() => setLoading(true)}
               />
             ) : (
               <button
@@ -137,6 +148,7 @@ export function SidebarDashboard({children, permissions}: SidebarProps ){
               pathname={pathname}
               isCollapsed={isCollapsed}
               label="Perfil"
+              onClick={() => setLoading(true)}
             />
             <SidbarLinks
               href="/dashboard/plans"
@@ -144,6 +156,7 @@ export function SidebarDashboard({children, permissions}: SidebarProps ){
               pathname={pathname}
               isCollapsed={isCollapsed}
               label="Planos"
+              onClick={() => setLoading(true)}
             />
           </nav>
         )}
@@ -161,6 +174,7 @@ export function SidebarDashboard({children, permissions}: SidebarProps ){
                 pathname={pathname}
                 isCollapsed={isCollapsed}
                 label="Agendamento"
+                onClick={() => setLoading(true)}
               />
 
               <SidbarLinks
@@ -169,6 +183,7 @@ export function SidebarDashboard({children, permissions}: SidebarProps ){
                 pathname={pathname}
                 isCollapsed={isCollapsed}
                 label="Serviços"
+                onClick={() => setLoading(true)}
               />
 
               {permissions.planId !== "TRIAL" ? (
@@ -178,6 +193,7 @@ export function SidebarDashboard({children, permissions}: SidebarProps ){
                 pathname={pathname}
                 isCollapsed={isCollapsed}
                 label="Relatórios"
+                onClick={() => setLoading(true)}
               />
             ) : (
               <button
@@ -210,6 +226,7 @@ export function SidebarDashboard({children, permissions}: SidebarProps ){
                 pathname={pathname}
                 isCollapsed={isCollapsed}
                 label="Perfil"
+                onClick={() => setLoading(true)}
               />
               <SidbarLinks
                 href="/dashboard/plans"
@@ -217,6 +234,7 @@ export function SidebarDashboard({children, permissions}: SidebarProps ){
                 pathname={pathname}
                 isCollapsed={isCollapsed}
                 label="Planos"
+                onClick={() => setLoading(true)}
               />
             </nav>
           </CollapsibleContent>
@@ -230,7 +248,10 @@ export function SidebarDashboard({children, permissions}: SidebarProps ){
           className={clsx("w-full justify-start", {
             "px-0 justify-center": isCollapsed, // Centraliza quando retraído
           })}
-          onClick={handlelognout}
+          onClick={() => {
+            handlelognout()
+            setLoading(true)}
+          } 
         >
           <LogOut className="w-5 h-5" />
           {!isCollapsed && <p className="ml-2">Sair</p>}
@@ -275,6 +296,8 @@ export function SidebarDashboard({children, permissions}: SidebarProps ){
                 pathname={pathname}
                 isCollapsed={isCollapsed}
                 label="Agendamento"
+                onClick={() => setLoading(true)}
+                
               />
 
               <SidbarLinks
@@ -283,6 +306,7 @@ export function SidebarDashboard({children, permissions}: SidebarProps ){
                 pathname={pathname}
                 isCollapsed={isCollapsed}
                 label="Serviços"
+                onClick={() => setLoading(true)}
               />
 
               {permissions.planId !== "TRIAL" ? (
@@ -292,6 +316,7 @@ export function SidebarDashboard({children, permissions}: SidebarProps ){
                   pathname={pathname}
                   isCollapsed={isCollapsed}
                   label="Relatórios"
+                  onClick={() => setLoading(true)}
                 />
               ) : (
                 <button
@@ -321,6 +346,7 @@ export function SidebarDashboard({children, permissions}: SidebarProps ){
                 pathname={pathname}
                 isCollapsed={isCollapsed}
                 label="Perfil"
+                onClick={() => setLoading(true)}
               />
               <SidbarLinks
                 href="/dashboard/plans"
@@ -328,10 +354,14 @@ export function SidebarDashboard({children, permissions}: SidebarProps ){
                 pathname={pathname}
                 isCollapsed={isCollapsed}
                 label="Planos"
+                onClick={() => setLoading(true)}
               />
             </nav>
             <div className="mt-auto pt-4 mb-6">
-              <Button variant="destructive" className="w-full justify-start" onClick={handlelognout}>
+              <Button variant="destructive" className="w-full justify-start" onClick={() => {
+            handlelognout()
+            setLoading(true)}
+          } >
                 <LogOut className="w-5 h-5 mr-2" />
                 Sair
               </Button>
@@ -341,7 +371,16 @@ export function SidebarDashboard({children, permissions}: SidebarProps ){
         </Sheet>
       </header>
 
-      <main className="flex-1 py-4 px-2 md:p-6">{children}</main>
+      <div className="flex-1 relative py-4 px-2 md:p-6">
+      {/* Loading apenas sobre o conteúdo */}
+      {loading && (
+        <div className="absolute inset-0 bg-white bg-opacity-50 z-20 flex items-center justify-center">
+          <Loader2 className="w-8 h-8 animate-spin text-emerald-500" />
+        </div>
+      )}
+
+      <main>{children}</main>
+    </div>
     </div>
     <Dialog open={showModal} onOpenChange={setShowModal}>
   <DialogContent>

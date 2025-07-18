@@ -1,14 +1,14 @@
 "use client"
-import { useEffect, useState } from "react"
+
+import { useState } from "react"
 import { signIn } from "next-auth/react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ArrowLeft, Loader2 } from "lucide-react"
 import GitHub from "../../../../public/github.svg"
 import Google from "../../../../public/google.svg"
 import Image from "next/image"
-import { useSearchParams } from "next/navigation"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
@@ -16,19 +16,15 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const router = useRouter()
-  const [success, setSuccess] = useState<string | null>(null)
 
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search)
-    const successParam = params.get("success")
-    if (successParam) {
-      setSuccess(successParam)
-    }
-  }, [])
+  const searchParams = useSearchParams()
+  const success = searchParams.get("success")
 
   async function handleCredentialsLogin(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true)
+    setError("")
+
     const res = await signIn("credentials", {
       email,
       password,
@@ -36,7 +32,11 @@ export default function LoginPage() {
     })
 
     if (res?.error) {
-      setError(res.error)
+      const errorMessage =
+        res.error === "CredentialsSignin"
+          ? "Email ou senha inválidos. Verifique seus dados."
+          : res.error
+      setError(errorMessage)
       setLoading(false)
     } else {
       router.push("/dashboard")
@@ -49,7 +49,6 @@ export default function LoginPage() {
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-100 to-white px-4">
-      {/* Botão voltar no topo esquerdo */}
       <button
         onClick={() => router.push("/")}
         className="absolute top-6 left-6 p-2 rounded-full hover:bg-gray-200 transition"
@@ -58,6 +57,7 @@ export default function LoginPage() {
       >
         <ArrowLeft className="w-6 h-6 text-gray-700" />
       </button>
+
       <div className="w-full max-w-md bg-white p-6 rounded-2xl shadow-lg space-y-6">
         <h1 className="text-3xl font-semibold text-center text-gray-800">Bem-vindo de volta</h1>
         <p className="text-center text-sm text-gray-500">Faça login para acessar sua conta</p>
@@ -90,7 +90,11 @@ export default function LoginPage() {
             />
           </div>
 
-          {error && <p className="text-red-500 text-sm">{error}</p>}
+          {error && (
+            <p className="text-red-600 text-sm bg-red-100 border border-red-300 px-3 py-2 rounded-md">
+              {error}
+            </p>
+          )}
 
           <Button type="submit" className="w-full" disabled={loading}>
             {loading ? (

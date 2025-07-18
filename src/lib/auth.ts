@@ -7,9 +7,8 @@ import Google from "next-auth/providers/google"
 import Credentials from "next-auth/providers/credentials"
 import { signInSchema } from "./zod"
 import { getUserFromDb } from "./get-user"
-import { comparePassword, hashPassword } from "@/utils/password"
 import { ZodError } from "zod" 
-import { Awaitable } from "@auth/core/types"
+
 
 
 
@@ -46,25 +45,54 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   ],
   session: { strategy: "jwt" },
   callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id;
-        token.name = user.name;
-        token.email = user.email;
-      }
-      return token;
-    },
-    async session({ session, token }) {
-      if (session.user) {
-    // Faz um "cast" para informar que token tem essas propriedades
-    const typedToken = token as { id: string; name: string; email: string };
+    async jwt({ token, user, account }) {
+  // Primeiro login: user e account existem
+  if (user && account) {
+    // Se for login via Google ou GitHub, buscar manualmente o user no banco
+    if (account.provider === "google" || account.provider === "github") {
+      const dbUser = await prisma.user.findUnique({
+        where: { email: user.email! }
+      })
 
-    session.user.id = typedToken.id;
-    session.user.name = typedToken.name;
-    session.user.email = typedToken.email;
+      if (dbUser) {
+        token.id = dbUser.id
+        token.name = dbUser.name
+        token.email = dbUser.email
+        token.createdAt = dbUser.createdAt.toISOString()
+      }
+    }
+
+    // Se for login via credentials (já está com os dados certos)
+    if (account.provider === "credentials") {
+      token.id = user.id
+      token.name = user.name
+      token.email = user.email
+      token.createdAt = user.createdAt as string
+    }
   }
-  return session;
-    },
+
+  return token
+},
+    async session({ session, token }) {
+  if (session.user) {
+    const typedToken = token as {
+      id: string
+      name: string
+      email: string
+      createdAt?: string
+    }
+
+    session.user.id = typedToken.id
+    session.user.name = typedToken.name
+    session.user.email = typedToken.email
+
+    if (typedToken.createdAt) {
+      session.user.createdAt = typedToken.createdAt
+    }
+  }
+
+  return session
+},
     async signIn({ user, account }) {
       // Bloquear se for login com credenciais e email não confirmado
       if (account?.provider === "credentials") {

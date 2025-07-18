@@ -11,7 +11,8 @@ export interface ResultPermissionProp{
   hasPermission: boolean,
   planId: PLAN_PROP,
   expired: boolean,
-  plan: PlanDetailInfo | null
+  plan: PlanDetailInfo | null,
+  createdAt?: string
 }
 
 interface CanPermissionProps {
@@ -27,7 +28,8 @@ export async function canPermission({ type }: CanPermissionProps): Promise<Resul
       hasPermission: false,
       planId: "EXPIRED",
       expired: true,
-      plan: null
+      plan: null,
+      createdAt: session?.user.createdAt
     }
   }
 
@@ -48,7 +50,8 @@ export async function canPermission({ type }: CanPermissionProps): Promise<Resul
           hasPermission: false,
           planId: "EXPIRED",
           expired: true,
-          plan: null
+          plan: null,
+          createdAt: session?.user.createdAt
         }
   }
 

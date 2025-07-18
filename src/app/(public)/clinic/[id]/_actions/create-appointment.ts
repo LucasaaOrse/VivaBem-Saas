@@ -42,7 +42,8 @@ export async function createNewAppointment(formData: FormSchema) {
         appointmentDate: appointmentDate,
         time: formData.time,
         serviceId: formData.serviceId,
-        userId: formData.clinicId
+        userId: formData.clinicId,
+        status: "PENDING"
       }
     })
 

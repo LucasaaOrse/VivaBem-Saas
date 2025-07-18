@@ -7,12 +7,14 @@ interface SidebarLinkProps{
   pathname: string
   label: string
   isCollapsed: boolean
+  onClick?: () => void
 }
 
-export function SidbarLinks({href, icon, isCollapsed, label, pathname}: SidebarLinkProps){
+export function SidbarLinks({href, icon, isCollapsed, label, pathname, onClick}: SidebarLinkProps){
   return (
     <Link
       href={href}
+      onClick={onClick}
     >
       <div className={clsx("flex items-center gap-2 px-3 py-2 rounded-md transition-colors", {
         "bg-blue-500 text-white" : pathname === href,

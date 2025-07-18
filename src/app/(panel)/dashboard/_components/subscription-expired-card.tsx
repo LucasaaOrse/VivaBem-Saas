@@ -16,7 +16,7 @@ export function SubscriptionExpiredCard({
   title = "Período de teste encerrado",
   description = "Sua conta estava em modo de avaliação gratuita, que já expirou.",
   buttonText = "Ver Planos",
-  redirectTo = "/planos",
+  redirectTo = "/dashboard/plans",
 }: SubscriptionExpiredCardProps) {
   const router = useRouter()
 
