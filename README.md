@@ -43,7 +43,7 @@
 
 ## 📌 Visão Geral
 
-**VivaBem-Saas** é um kit de desenvolvimento completo para criar plataformas SaaS escaláveis e seguras com agendamento e cobrança integrados.
+**VivaBem-Saas** é um um projeto de Sass de Clinicas e consultas.
 
 ### ✨ Funcionalidades principais:
 
@@ -72,3 +72,26 @@ Clone o repositório e instale as dependências:
 git clone https://github.com/LucasaaOrse/VivaBem-Saas
 cd VivaBem-Saas
 npm install
+
+```
+Gere o Prisma Client:
+
+```bash
+
+npx prisma generate
+
+````
+
+Rode as migrations e atualize o banco de dados:
+````bash
+npx prisma migrate dev
+
+````
+
+▶️ Uso
+
+````bash
+npm run dev
+
+
+
